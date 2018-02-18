@@ -51,16 +51,16 @@ window.onload = function()
     canvas = document.getElementById('yknk');
     if (!canvas || !canvas.getContext) {
         document.getElementById("debug").innerHTML +=
-            "このブラウザはCanvasに対応していません。<br/>" +
-            "最新のバージョンにアップデートするか、他のブラウザでプレイしてください。<br/>";
+            "このブラウザはCanvasに対応していません。<br>" +
+            "最新のバージョンにアップデートするか、他のブラウザでプレイしてください。<br>";
         return false;
     }
     ctx = canvas.getContext('2d');
 
     // Cookieからハイスコア読み込み
     if (navigator.cookieEnabled == false) {
-        var mes = "Cookieが無効になっています。<br/>" +
-            "ハイスコアなどのプレイデータを記録するには、Cookieを有効にしてください。<br/>";
+        var mes = "Cookieが無効になっています。<br>" +
+            "ハイスコアなどのプレイデータを記録するには、Cookieを有効にしてください。<br>";
         document.getElementById("debug").innerHTML += mes;
         return false;
     }
@@ -154,14 +154,14 @@ function modeChg(m)
         mode_n = 0;
         isdead = false;
         enable_fade = 0;        // フェードアウト制御
-        yknk = 0;                // いままで飛んできた焼肉定食数
-        score = 0;                // 得点数
-        life = 3;                // ライフ
-        chr_y = 3;                // キャラクタのY座標(0～7)
-        yknk_num = 1;            // 焼肉定食の数(1～32)
-        yknk_speed = 2*2;        // 焼肉定食のスピード
-        knife = 4;                // ナイフ率
-        dlc_yknk = 128;            // デリシャス焼肉定食率
+        yknk = 0;               // いままで飛んできた焼肉定食数
+        score = 0;              // 得点数
+        life = 3;               // ライフ
+        chr_y = 3;              // キャラクタのY座標(0～7)
+        yknk_num = 1;           // 焼肉定食の数(1～32)
+        yknk_speed = 2*2;       // 焼肉定食のスピード
+        knife = 4;              // ナイフ率
+        dlc_yknk = 128;         // デリシャス焼肉定食率
     }
     if (m == 1) {
         mode_n = 1;

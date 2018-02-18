@@ -94,8 +94,8 @@ function init()
     // canvas要素の存在チェック、未対応ブラウザの対応
     if (!canvas || !canvas.getContext) {
         document.getElementById("debug").innerHTML +=
-            "このブラウザはCanvasに対応していません。<br/>" +
-            "最新のバージョンにアップデートするか、他のブラウザでプレイしてください。<br/>";
+            "このブラウザはCanvasに対応していません。<br>" +
+            "最新のバージョンにアップデートするか、他のブラウザでプレイしてください。<br>";
         return false;
     }
     ctx = canvas.getContext('2d');
@@ -137,7 +137,7 @@ function load_audio()
 {
     // HTML5 Audioが利用できない場合
     if (!window.HTMLAudioElement) {
-        var mes = "HTML5 Audioが利用できません。<br/>";
+        var mes = "HTML5 Audioが利用できません。<br>";
         document.getElementById("debug").innerHTML += mes;
         return;
     }
@@ -153,8 +153,8 @@ function load_cookie()
 {
     // Cookieが無効な場合は警告
     if (navigator.cookieEnabled == false) {
-        var mes = "Cookieが無効になっています。<br/>" +
-            "ハイスコアなどのプレイデータを記録するには、Cookieを有効にしてください。<br/>";
+        var mes = "Cookieが無効になっています。<br>" +
+            "ハイスコアなどのプレイデータを記録するには、Cookieを有効にしてください。<br>";
         document.getElementById("debug").innerHTML += mes;
         return;
     }
@@ -879,9 +879,9 @@ function endfade(m)
 function play_loop(id)
 {
     var f = function (n) {
-                var s = snd[n];
-                return function () { s.play(); };
-            };
+        var s = snd[n];
+        return function () { s.play(); };
+    };
     snd[id].play();
     snd[id].addEventListener('ended', f(id), false);
 }
