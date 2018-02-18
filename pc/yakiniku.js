@@ -598,7 +598,7 @@ function draw()
             var desc = ["ゲームをはじめます。",
                         "今までの記録を見ます。",
                         "ゲームの設定やバージョンを確認します。"];
-            var ar = multilineText(ctx, desc[selmenu], 148-6*2);
+            var ar = Moge.Utils.multilineText(ctx, desc[selmenu], 148-6*2);
             ctx.textAlign = "start";
             ctx.fillStyle = "white";
             for (i = 0; i < ar.length; i++) {
@@ -929,45 +929,6 @@ function drawBottomBar()
     }
     ctx.fillText("ESC: ミュート", 8, 240-8);
     ctx.fillText("F5: リセット", 100, 240-8);
-}
-function multilineText(context, text, width)
-{
-    // http://ninoha.com/?p=60 より
-    var len = text.length;
-    var strArray = [];
-    var tmp = "";
-    var i = 0;
-
-    if (len < 1) {
-        // textの文字数が0だったら終わり
-        return strArray;
-    }
-
-    for (i = 0; i < len; i++) {
-        var c = text.charAt(i);  // textから１文字抽出
-        if (c == "\n") {
-            // 改行コードの場合はそれまでの文字列を配列にセット
-            strArray.push(tmp);
-            tmp = "";
-            continue;
-        }
-
-        // contextの現在のフォントスタイルで描画したときの長さを取得
-        if (context.measureText(tmp + c).width <= width) {
-            // 指定幅を超えるまでは文字列を繋げていく
-            tmp += c;
-        } else {
-            // 超えたら、それまでの文字列を配列にセット
-            strArray.push(tmp);
-            tmp = c;
-        }
-    }
-
-    // 繋げたままの分があれば回収
-    if (tmp.length > 0)
-        strArray.push(tmp);
-
-    return strArray;
 }
 
 ///// DOM関連
