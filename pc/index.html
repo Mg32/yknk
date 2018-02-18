@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+
+	<title>焼肉定食ゲーム Ver 1.5</title>
+	<link rel="shortcut icon" type="image/x-icon" href="../../favicon.ico" />
+
+	<link href="./style.css" rel="stylesheet" type="text/css" />
+
+	<!--[if IE]><script src="./excanvas.js"></script><![endif]-->
+	<script src="./yakiniku.js"></script>
+</head>
+
+<body>
+	<div id="cnvs">
+		<canvas id="yknk" width="320" height="240"></canvas>
+		<div id="points">
+			<a href="https://twitter.com/share" class="twitter-share-button" data-url="http://yakinikuteishoku.xxxxxxxx.jp/2/" data-text="焼肉定食ゲームにてREPLACE点獲得！" data-lang="ja">ツイート</a>
+			<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+		</div><br/>
+	</div>
+
+	<div id="debug"></div>
+
+	<noscript>
+	焼肉定食ゲームではJavaScriptを利用しています。<br/>
+	プレイするにはJavaScriptを有効にしてください。<br/>
+	</noscript>
+	<audio>
+	このブラウザはHTML5オーディオ再生に対応していません。<br/>
+	</audio>
+
+	<audio id="snd_cur">
+		<source src="./cur.m4a" type="audio/mpeg" />
+		<source src="./cur.ogg" type="audio/ogg" />
+	</audio>
+
+	<audio id="snd_get1">
+		<source src="./get1.m4a" type="audio/mpeg" />
+		<source src="./get1.ogg" type="audio/ogg" />
+	</audio>
+
+	<audio id="snd_get2">
+		<source src="./get2.m4a" type="audio/mpeg" />
+		<source src="./get2.ogg" type="audio/ogg" />
+	</audio>
+
+	<audio id="snd_miss">
+		<source src="./miss.m4a" type="audio/mpeg" />
+		<source src="./miss.ogg" type="audio/ogg" />
+	</audio>
+
+	<audio id="bgm_menu">
+		<source src="./yknk1.m4a" type="audio/mpeg" />
+		<source src="./yknk1.ogg" type="audio/ogg" />
+	</audio>
+
+	<audio id="bgm_play">
+		<source src="./yknk2.m4a" type="audio/mpeg" />
+		<source src="./yknk2.ogg" type="audio/ogg" />
+	</audio>
+
+	<audio id="bgm_play2">
+		<source src="./yknk2_2.m4a" type="audio/mpeg" />
+		<source src="./yknk2_2.ogg" type="audio/ogg" />
+	</audio>
+
+	<audio id="bgm_select">
+		<source src="./yknk4v2.m4a" type="audio/mpeg" />
+		<source src="./yknk4v2.ogg" type="audio/ogg" />
+	</audio>
+</body>
+</html>
