@@ -570,7 +570,7 @@ function get_yknk(kind)
             enable_fade = -1;
             setTimeout(function(){
                 mode_n = -1; enable_fade = 240;
-                enable_tweetbutton();
+                Yknk.Share.shareScore(score);
             }, 1000);
             return true;
         }
@@ -848,6 +848,9 @@ function draw()
 // 画面切り替え
 function modeChg(m)
 {
+    if (m == 0) {
+        Yknk.Share.init();
+    }
     if (m == 1) {
         mode_n = 1;
         enable_fade = 240;
@@ -930,28 +933,4 @@ function drawBottomBar()
     }
     ctx.fillText("ESC: ミュート", 8, 240-8);
     ctx.fillText("F5: リセット", 100, 240-8);
-}
-
-///// DOM関連
-function enable_tweetbutton()
-{
-    var i;
-    var points = document.getElementById("points");
-    points.innerHTML = points.innerHTML.replace("REPLACE", String(score));
-
-    var twbutton = points.getElementsByClassName("twitter-share-button");
-    for (i = 0; i < twbutton.length; i++) {
-        twbutton[i].setAttribute("style", "display: inline;");
-    }
-}
-function disable_tweetbutton()
-{
-    var i;
-    var points = document.getElementById("points");
-    points.innerHTML = points.innerHTML.replace(String(score)+"点", "REPLACE点");
-
-    var twbutton = points.getElementsByClassName("twitter-share-button");
-    for (i = 0; i < twbutton.length; i++) {
-        twbutton[i].setAttribute("style", "display: none;");
-    }
 }

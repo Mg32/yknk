@@ -18,8 +18,5 @@ div#debug {
 
 div#points {
     width: 320px;
-}
-
-.twitter-share-button {
     display: none;
 }

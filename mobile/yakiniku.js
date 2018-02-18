@@ -101,28 +101,6 @@ function getCookie(n)
     }
     return "";
 }
-function enable_tweetbutton()
-{
-    var i;
-    var points = document.getElementById("points");
-    points.innerHTML = points.innerHTML.replace("REPLACE", String(score));
-
-    var twbutton = points.getElementsByClassName("twitter-share-button");
-    for (i = 0; i < twbutton.length; i++) {
-        twbutton[i].setAttribute("style", "display: inline;");
-    }
-}
-function disable_tweetbutton()
-{
-    var i;
-    var points = document.getElementById("points");
-    points.innerHTML = points.innerHTML.replace(String(score)+"点", "REPLACE点");
-
-    var twbutton = points.getElementsByClassName("twitter-share-button");
-    for (i = 0; i < twbutton.length; i++) {
-        twbutton[i].setAttribute("style", "display: none;");
-    }
-}
 
 
 ///// イベント
@@ -151,7 +129,7 @@ function touchEnd(e)
 function modeChg(m)
 {
     if (m == 0) {
-        disable_tweetbutton();
+        Yknk.Share.init();
         mode   = 0;
         mode_n = 0;
         isdead = false;
@@ -214,7 +192,7 @@ function update()
                         enable_fade = -1;
                         setTimeout(function(){
                             mode_n = -1; enable_fade = 240;
-                            enable_tweetbutton();
+                            Yknk.Share.shareScore(score);
                         }, 1000);
                         return;
                     }
