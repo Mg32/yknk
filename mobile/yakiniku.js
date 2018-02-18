@@ -59,14 +59,14 @@ window.onload = function()
     ctx = canvas.getContext('2d');
 
     // Cookieからハイスコア読み込み
-    if (navigator.cookieEnabled == false) {
+    if (!Yknk.Cookie.isEnabled()) {
         Yknk.log(
             "Cookieが無効になっています。\n" +
-            "ハイスコアなどのプレイデータを記録するには、Cookieを有効にしてください。"
+            "プレイデータを記録するには、Cookieを有効にしてください。"
         );
         return false;
     }
-    var ck = getCookie("high_score");
+    var ck = Yknk.Cookie.get("high_score");
     if (ck) {
         mscore = Number(ck);
     }
@@ -86,21 +86,6 @@ window.onload = function()
         };
     };
 };
-function setCookie(n, v)
-{
-    document.cookie = n + "=" + escape(v) + ";expires=Sat, 3-Sep-2112 00:00:00";
-}
-function getCookie(n)
-{
-    var c = document.cookie + ";";
-    var pos = c.indexOf(n);
-    if (pos >= 0) {
-        var pos_start = c.indexOf("=", pos) + 1;
-        var pos_end = c.indexOf(";", pos);
-        return unescape(c.substring(pos_start, pos_end));
-    }
-    return "";
-}
 
 
 ///// イベント
@@ -232,7 +217,7 @@ function update()
             // 記録更新ならCookieに書き込み
             if (mscore < score) {
                 mscore = score;
-                setCookie("high_score", mscore);
+                Yknk.Cookie.set("high_score", mscore);
             }
         }
     }

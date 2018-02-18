@@ -152,7 +152,7 @@ function load_audio()
 function load_cookie()
 {
     // Cookieが無効な場合は警告
-    if (navigator.cookieEnabled == false) {
+    if (!Yknk.Cookie.isEnabled()) {
         Yknk.log(
             "Cookieが無効になっています。\n" +
             "ハイスコアなどのプレイデータを記録するには、Cookieを有効にしてください。"
@@ -161,51 +161,33 @@ function load_cookie()
     }
 
     // ミュートON/OFF
-    if (getCookie("muted") === "true") {
+    if (Yknk.Cookie.get("muted") === "true") {
         for (var i = 0; i < sndsrc.length; i++) {
             snd[i].muted = true;
         }
     }
 
     // ハイスコア
-    var strsc = getCookie("high_score");
+    var strsc = Yknk.Cookie.get("high_score");
     if (strsc)
         mscore = Number(strsc);
 
     // いままでに獲得した焼肉定食数
-    var strsy = getCookie("sum_yknk");
+    var strsy = Yknk.Cookie.get("sum_yknk");
     if (strsy === "")
         sumyknk = mscore;
     else
         sumyknk = Number(strsy);
 
     // 音量BGM/SE
-    var strbgm = getCookie("vol_bgm");
-    var strse  = getCookie("vol_se");
+    var strbgm = Yknk.Cookie.get("vol_bgm");
+    var strse  = Yknk.Cookie.get("vol_se");
     if (sndloaded == false) return;
     if (strbgm && !isNaN(strbgm))
         vol_bgm = Number(strbgm);
     if (strse  && !isNaN(strse))
         vol_se  = Number(strse);
     set_volume(vol_bgm, vol_se);
-}
-function setCookie(n, v)
-{
-    // Cookieの登録
-    // ドラえもんの誕生日に期限切れ
-    document.cookie = n + "=" + escape(v) + ";expires=Sat, 3-Sep-2112 00:00:00";
-}
-function getCookie(n)
-{
-    // Cookieの取得
-    var c = document.cookie + ";";
-    var pos = c.indexOf(n);
-    if (pos >= 0) {
-        var pos_start = c.indexOf("=", pos) + 1;
-        var pos_end = c.indexOf(";", pos);
-        return unescape(c.substring(pos_start, pos_end));
-    }
-    return "";
 }
 
 
@@ -322,7 +304,7 @@ function keyup(e)
         for (var i = 0; i < sndsrc.length; i++) {
             snd[i].muted = 1-snd[i].muted;
         }
-        setCookie("muted", snd[0].muted);
+        Yknk.Cookie.set("muted", snd[0].muted);
         isDrawInit = true;
         return;
     }
@@ -368,8 +350,8 @@ function keyup(e)
             if (selmenu == 2 && keycode == 32) {
                 // 32:Space
                 set_volume(vol_bgm, vol_se);
-                setCookie("vol_bgm", vol_bgm);
-                setCookie("vol_se" , vol_se);
+                Yknk.Cookie.set("vol_bgm", vol_bgm);
+                Yknk.Cookie.set("vol_se" , vol_se);
                 snd[0].play();
                 selmenu = submode;
                 submode = 0;
@@ -452,10 +434,10 @@ function update()
                         // ハイスコア記録
                         if (mscore < score) {
                             mscore = score;
-                            setCookie("high_score", mscore);
+                            Yknk.Cookie.set("high_score", mscore);
                         }
                         // 焼肉定食総計記録
-                        setCookie("sum_yknk", sumyknk);
+                        Yknk.Cookie.set("sum_yknk", sumyknk);
                     } else {
                         // バグモード２に遷移
                         if (score >= 8929) {
