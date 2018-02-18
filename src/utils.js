@@ -1,7 +1,19 @@
 
-var Moge = Moge || {};
+var Yknk = Yknk || {};
 
-Moge.Utils = Moge.Utils || {
+Yknk.Utils = Yknk.Utils || {
+    convertToHTML: function(text) {
+        // text: 文字列
+        var html = text
+            // HTMLエスケープ
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            // 改行 → <br>
+            .replace(/\r\n|\n|\r/g, "<br>")
+        ;
+        return html;
+    },
     multilineText: function(context, text, width) {
         // context: Canvasコンテキスト
         // text:    文字列

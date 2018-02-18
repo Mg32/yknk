@@ -93,9 +93,10 @@ function init()
 
     // canvas要素の存在チェック、未対応ブラウザの対応
     if (!canvas || !canvas.getContext) {
-        document.getElementById("debug").innerHTML +=
-            "このブラウザはCanvasに対応していません。<br>" +
-            "最新のバージョンにアップデートするか、他のブラウザでプレイしてください。<br>";
+        Yknk.log(
+            "このブラウザはCanvasに対応していません。\n" +
+            "最新のバージョンにアップデートするか、他のブラウザでプレイしてください。"
+        );
         return false;
     }
     ctx = canvas.getContext('2d');
@@ -137,8 +138,7 @@ function load_audio()
 {
     // HTML5 Audioが利用できない場合
     if (!window.HTMLAudioElement) {
-        var mes = "HTML5 Audioが利用できません。<br>";
-        document.getElementById("debug").innerHTML += mes;
+        Yknk.log("HTML5 Audio を利用できません。");
         return;
     }
 
@@ -153,9 +153,10 @@ function load_cookie()
 {
     // Cookieが無効な場合は警告
     if (navigator.cookieEnabled == false) {
-        var mes = "Cookieが無効になっています。<br>" +
-            "ハイスコアなどのプレイデータを記録するには、Cookieを有効にしてください。<br>";
-        document.getElementById("debug").innerHTML += mes;
+        Yknk.log(
+            "Cookieが無効になっています。\n" +
+            "ハイスコアなどのプレイデータを記録するには、Cookieを有効にしてください。"
+        );
         return;
     }
 
@@ -598,7 +599,7 @@ function draw()
             var desc = ["ゲームをはじめます。",
                         "今までの記録を見ます。",
                         "ゲームの設定やバージョンを確認します。"];
-            var ar = Moge.Utils.multilineText(ctx, desc[selmenu], 148-6*2);
+            var ar = Yknk.Utils.multilineText(ctx, desc[selmenu], 148-6*2);
             ctx.textAlign = "start";
             ctx.fillStyle = "white";
             for (i = 0; i < ar.length; i++) {

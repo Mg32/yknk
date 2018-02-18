@@ -50,18 +50,20 @@ window.onload = function()
     // canvas要素の存在チェック、未対応ブラウザの対応
     canvas = document.getElementById('yknk');
     if (!canvas || !canvas.getContext) {
-        document.getElementById("debug").innerHTML +=
-            "このブラウザはCanvasに対応していません。<br>" +
-            "最新のバージョンにアップデートするか、他のブラウザでプレイしてください。<br>";
+        Yknk.log(
+            "このブラウザはCanvasに対応していません。\n" +
+            "最新のバージョンにアップデートするか、他のブラウザでプレイしてください。"
+        );
         return false;
     }
     ctx = canvas.getContext('2d');
 
     // Cookieからハイスコア読み込み
     if (navigator.cookieEnabled == false) {
-        var mes = "Cookieが無効になっています。<br>" +
-            "ハイスコアなどのプレイデータを記録するには、Cookieを有効にしてください。<br>";
-        document.getElementById("debug").innerHTML += mes;
+        Yknk.log(
+            "Cookieが無効になっています。\n" +
+            "ハイスコアなどのプレイデータを記録するには、Cookieを有効にしてください。"
+        );
         return false;
     }
     var ck = getCookie("high_score");
