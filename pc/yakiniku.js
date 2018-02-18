@@ -1,4 +1,4 @@
-﻿
+
 ///// グローバル変数
 var canvas;
 var ctx;
