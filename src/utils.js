@@ -1,9 +1,20 @@
 
 var Yknk = Yknk || {};
 
+
+// ログへ出力する
+Yknk.log = function (message) {
+    var target = document.getElementById("debug");
+    var html = Yknk.Utils.convertToHTML(message) + "<br>";
+    target.innerHTML += html;
+};
+
+
 Yknk.Utils = Yknk.Utils || {
+
+    // 文字列をHTMLへ変換する
+    // text: 文字列
     convertToHTML: function(text) {
-        // text: 文字列
         var html = text
             // HTMLエスケープ
             .replace(/&/g, '&amp;')
@@ -14,10 +25,12 @@ Yknk.Utils = Yknk.Utils || {
         ;
         return html;
     },
+
+    // 文字列を指定幅にあうように改行する
+    // context: Canvasコンテキスト
+    // text:    文字列
+    // width:   描画する幅 (px)
     multilineText: function(context, text, width) {
-        // context: Canvasコンテキスト
-        // text:    文字列
-        // width:   描画する幅
         // http://ninoha.com/?p=60 より
         var len = text.length;
         var strArray = [];
@@ -56,4 +69,5 @@ Yknk.Utils = Yknk.Utils || {
 
         return strArray;
     },
+
 };
