@@ -9,12 +9,15 @@ body {
 div#cnvs {
     webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
+
 div#debug {
-    width: 320px; color: gray;
+    padding: 10px; color: gray;
 }
+
 div#points {
     width: 320px;
 }
+
 .twitter-share-button {
     display: none;
 }

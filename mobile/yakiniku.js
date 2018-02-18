@@ -4,11 +4,11 @@
 ///// グローバル変数
 var canvas;
 var ctx;
-var mode    = 0;
-var mode_n    = 0;
-var isdead  = false;
-var img        = [];
-var imgsrc    = ["chr.png", "../bg0.png"];
+var mode        = 0;
+var mode_n      = 0;
+var isdead      = false;
+var img         = [];
+var imgsrc      = ["chr.png", "../bg0.png"];
 var defaultFont = " sans-serif";
 
 // フェードアウト制御

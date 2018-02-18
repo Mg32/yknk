@@ -5,12 +5,12 @@ var ctx;
 var snd         = [];
 var sndsrc      = ["snd_cur", "snd_get1", "snd_get2", "snd_miss",
                    "bgm_menu", "bgm_play", "bgm_play2", "bgm_select"];
-var sndloaded    = false;
+var sndloaded   = false;
 var img         = [];
 var imgsrc      = ["../title.png", "chr.png", "bar.png",
                    "../bg0.png", "../bg1.png", "bg0-0.png", "bg0-1.png", "mute.png",
                    "life.png", "../yk.png", "volume.png"];
-var imgloaded    = false;
+var imgloaded   = false;
 var defaultFont = " 'ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', Meiryo, sans-serif";
 
 // モード関連
