@@ -7,8 +7,7 @@ var ctx;
 var mode        = 0;
 var mode_n      = 0;
 var isdead      = false;
-var img         = [];
-var imgsrc      = ["chr.png", "../bg0.png"];
+Yknk.Image.src  = ["chr.png", "../bg0.png"];
 var defaultFont = " sans-serif";
 
 // フェードアウト制御
@@ -58,6 +57,9 @@ window.onload = function()
     }
     ctx = canvas.getContext('2d');
 
+    // リソースの読み込み
+    Yknk.Image.init();
+
     // Cookieからハイスコア読み込み
     if (!Yknk.Cookie.isEnabled()) {
         Yknk.log(
@@ -76,15 +78,8 @@ window.onload = function()
     canvas.addEventListener("touchmove", touchMove, false);
     canvas.addEventListener("touchend", touchEnd, false);
 
-    // リソースの読み込み
-    img[0] = new Image(); img[0].src = imgsrc[0];
-    img[0].onload = function () {
-        img[1] = new Image(); img[1].src = imgsrc[1];
-        img[1].onload = function () {
-            // 50FPSで処理開始
-            setInterval(enterFrame, 20);
-        };
-    };
+    // 約50FPSで処理
+    setInterval(enterFrame, 20);
 };
 
 
@@ -144,6 +139,7 @@ function modeChg(m)
 ///// ゲームループ
 function enterFrame()
 {
+    if (!Yknk.Image.isLoaded) { return; }
     update();
     draw();
 }
@@ -255,7 +251,7 @@ function draw()
         ctx.fillStyle = "#CCCCCC";
         ctx.fillText("飛んでくる焼肉定食をキャッチしよう！", 59, 120);
         ctx.fillText("ハイスコア：", 102, 142);
-        ctx.drawImage(img[0], 24, 0, 24, 24, 181, 126, 24, 24);
+        ctx.drawImage(Yknk.Image.image[0], 24, 0, 24, 24, 181, 126, 24, 24);
 
         ctx.fillStyle = "#6699CC";
         ctx.fillRect(70, 162, 180, 59);
@@ -265,7 +261,7 @@ function draw()
     }
     if (mode == 1) {
         // 背景
-        ctx.drawImage(img[1], 0, 0, 320, 240, 0, 0, 320, 240);
+        ctx.drawImage(Yknk.Image.image[1], 0, 0, 320, 240, 0, 0, 320, 240);
         // 上部のバー
         ctx.fillStyle = "#333333";
         ctx.fillRect(0, 0, 320, 32);
@@ -273,18 +269,18 @@ function draw()
         ctx.font = "12px" + defaultFont;
         ctx.fillStyle = "white";
         ctx.textAlign = "start";
-        ctx.drawImage(img[0], 24, 0, 24, 24, 12, 4, 24, 24);
+        ctx.drawImage(Yknk.Image.image[0], 24, 0, 24, 24, 12, 4, 24, 24);
         ctx.fillText("x " + score, 36, 20);
-        ctx.drawImage(img[0], 96+24*(life < 1), 0, 24, 24, 256   , 4, 24, 24);
-        ctx.drawImage(img[0], 96+24*(life < 2), 0, 24, 24, 256+16, 4, 24, 24);
-        ctx.drawImage(img[0], 96+24*(life < 3), 0, 24, 24, 256+32, 4, 24, 24);
+        ctx.drawImage(Yknk.Image.image[0], 96+24*(life < 1), 0, 24, 24, 256   , 4, 24, 24);
+        ctx.drawImage(Yknk.Image.image[0], 96+24*(life < 2), 0, 24, 24, 256+16, 4, 24, 24);
+        ctx.drawImage(Yknk.Image.image[0], 96+24*(life < 3), 0, 24, 24, 256+32, 4, 24, 24);
 
         // キャラクター
-        ctx.drawImage(img[0], 0, 0, 24, 24, 8/2+24, 32+16/2+24*chr_y, 24, 24);
+        ctx.drawImage(Yknk.Image.image[0], 0, 0, 24, 24, 8/2+24, 32+16/2+24*chr_y, 24, 24);
 
         // 焼肉定食
         for (var i = 0; i < yknk_num; i++) {
-            ctx.drawImage(img[0], 24*(yknk_kind[i]+1), 0, 24, 24, 8/2+yknk_x[i], 32+16/2+24*yknk_y[i], 24, 24);
+            ctx.drawImage(Yknk.Image.image[0], 24*(yknk_kind[i]+1), 0, 24, 24, 8/2+yknk_x[i], 32+16/2+24*yknk_y[i], 24, 24);
         }
 
         if (isdead) {

@@ -2,15 +2,11 @@
 ///// グローバル変数
 var canvas;
 var ctx;
-var snd         = [];
-var sndsrc      = ["snd_cur", "snd_get1", "snd_get2", "snd_miss",
+Yknk.Audio.src  = ["snd_cur", "snd_get1", "snd_get2", "snd_miss",
                    "bgm_menu", "bgm_play", "bgm_play2", "bgm_select"];
-var sndloaded   = false;
-var img         = [];
-var imgsrc      = ["../title.png", "chr.png", "bar.png",
+Yknk.Image.src  = ["../title.png", "chr.png", "bar.png",
                    "../bg0.png", "../bg1.png", "bg0-0.png", "bg0-1.png", "mute.png",
                    "life.png", "../yk.png", "volume.png"];
-var imgloaded   = false;
 var defaultFont = " 'ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', Meiryo, sans-serif";
 
 // モード関連
@@ -105,10 +101,10 @@ function init()
     ctx.fillStyle = "black";
     ctx.fillText("Now Loading...", 160, 120);
 
-    // 画像読み込み
-    load_img(0);
-    // オーディオ読み込み
-    load_audio();
+    // リソースの読み込み
+    Yknk.Image.init();
+    Yknk.Audio.init();
+
     // Cookie読み込み
     load_cookie();
 
@@ -119,35 +115,6 @@ function init()
     // 約100FPSで処理
     setInterval(enterFrame, 10);
     return true;
-}
-function load_img(n)
-{
-    // 再帰的に画像を読み込む
-    if (n >= imgsrc.length-1) {
-        imgloaded = true;
-    }
-    img[n] = new Image();
-    img[n].src = imgsrc[n];
-    img[n].onload = function () {
-        if (n < imgsrc.length-1) {
-            load_img(n+1);
-        }
-    };
-}
-function load_audio()
-{
-    // HTML5 Audioが利用できない場合
-    if (!window.HTMLAudioElement) {
-        Yknk.log("HTML5 Audio を利用できません。");
-        return;
-    }
-
-    // オーディオのDOMオブジェクト読み込み
-    for (var i = 0; i < sndsrc.length; i++) {
-        snd[i] = document.getElementById(sndsrc[i]);
-        snd[i].volume = 1.0;
-    }
-    sndloaded = true;
 }
 function load_cookie()
 {
@@ -162,9 +129,7 @@ function load_cookie()
 
     // ミュートON/OFF
     if (Yknk.Cookie.get("muted") === "true") {
-        for (var i = 0; i < sndsrc.length; i++) {
-            snd[i].muted = true;
-        }
+        Yknk.Audio.muteAll(true);
     }
 
     // ハイスコア
@@ -182,7 +147,7 @@ function load_cookie()
     // 音量BGM/SE
     var strbgm = Yknk.Cookie.get("vol_bgm");
     var strse  = Yknk.Cookie.get("vol_se");
-    if (sndloaded == false) return;
+    if (!Yknk.Audio.isLoaded) return;
     if (strbgm && !isNaN(strbgm))
         vol_bgm = Number(strbgm);
     if (strse  && !isNaN(strse))
@@ -205,12 +170,12 @@ function keydown(e)
         if (submode == 0) {
             if (keycode == 40 || keycode == 83) {
                 // 40:↓  83:'S'
-                snd[0].play();
+                Yknk.Audio.play(0);
                 selmenu++;
             }
             if (keycode == 38 || keycode == 87) {
                 // 38:↑  87:'W'
-                snd[0].play();
+                Yknk.Audio.play(0);
                 selmenu--;
             }
             if (selmenu < 0) selmenu = 0;
@@ -221,14 +186,14 @@ function keydown(e)
             // 設定
             if (keycode == 40 || keycode == 83) {
                 // 40:↓  83:'S'
-                snd[0].play();
+                Yknk.Audio.play(0);
                 selmenu++;
                 if (selmenu > 2) selmenu = 2;
                 return;
             }
             if (keycode == 38 || keycode == 87) {
                 // 38:↑  87:'W'
-                snd[0].play();
+                Yknk.Audio.play(0);
                 selmenu--;
                 if (selmenu < 0) selmenu = 0;
                 return;
@@ -245,10 +210,10 @@ function keydown(e)
                     if (vol_se > 10) {
                         vol_se = 10;
                         set_volume(vol_bgm, vol_se);
-                        snd[3].play();
+                        Yknk.Audio.play(0);
                     } else {
                         set_volume(vol_bgm, vol_se);
-                        snd[0].play();
+                        Yknk.Audio.play(0);
                     }
                 }
                 return;
@@ -266,7 +231,7 @@ function keydown(e)
                         vol_se = 0;
                     } else {
                         set_volume(vol_bgm, vol_se);
-                        snd[0].play();
+                        Yknk.Audio.play(0);
                     }
                 }
                 return;
@@ -301,10 +266,8 @@ function keyup(e)
     // システムキー処理
     if (keycode == 27) {
         // 27:ESC
-        for (var i = 0; i < sndsrc.length; i++) {
-            snd[i].muted = 1-snd[i].muted;
-        }
-        Yknk.Cookie.set("muted", snd[0].muted);
+        Yknk.Audio.toggleAllMutes();
+        Yknk.Cookie.set("muted", Yknk.Audio.isMuted());
         isDrawInit = true;
         return;
     }
@@ -313,7 +276,7 @@ function keyup(e)
     if (mode == 0) {
         if (keycode == 32) {
             // 32:Space
-            snd[0].play();
+            Yknk.Audio.play(0);
             modeChg(1);
             return;
         }
@@ -323,7 +286,7 @@ function keyup(e)
         if (submode == 0) {
             if (keycode == 32) {
                 // 32:Space
-                snd[0].play();
+                Yknk.Audio.play(0);
                 if (selmenu == 0) {
                     modeChg(2);
                 } else {
@@ -338,7 +301,7 @@ function keyup(e)
             // 記録
             if (keycode == 32) {
                 // 32:Space
-                snd[0].play();
+                Yknk.Audio.play(0);
                 selmenu = submode;
                 submode = 0;
                 isDrawInit = true;
@@ -352,7 +315,7 @@ function keyup(e)
                 set_volume(vol_bgm, vol_se);
                 Yknk.Cookie.set("vol_bgm", vol_bgm);
                 Yknk.Cookie.set("vol_se" , vol_se);
-                snd[0].play();
+                Yknk.Audio.play(0);
                 selmenu = submode;
                 submode = 0;
                 isDrawInit = true;
@@ -375,11 +338,11 @@ function keyup(e)
                 // 46:Delete
                 // バグモードON
                 if (bugged == 0) {
-                    stop_loop(5);
-                    play_loop(6);
+                    Yknk.Audio.stopLoop(5);
+                    Yknk.Audio.playLoop(6);
                     bugged = 1;
                 } else {
-                    snd[3].play();
+                    Yknk.Audio.play(3);
                 }
             }
         }
@@ -391,7 +354,7 @@ function keyup(e)
 ///// ゲームループ
 function enterFrame()
 {
-    if (!imgloaded || !sndloaded) { return; }
+    if (!Yknk.Image.isLoaded || !Yknk.Audio.isLoaded) { return; }
     update();
     draw();
 }
@@ -441,7 +404,7 @@ function update()
                     } else {
                         // バグモード２に遷移
                         if (score >= 8929) {
-                            stop_loop(6);
+                            Yknk.Audio.stopLoop(6);
                             bugged = 2;
                         }
                     }
@@ -507,16 +470,16 @@ function get_yknk(kind)
         switch (kind) {
         case 0:
             // 焼肉定食
-            snd[1].play();
+            Yknk.Audio.play(1);
             break;
         case 1:
             // デリシャス
-            snd[2].play();
+            Yknk.Audio.play(2);
             life = 3;
             break;
         case 2:
             // 包丁
-            snd[3].play();
+            Yknk.Audio.play(3);
             life = 0;
             break;
         }
@@ -529,24 +492,24 @@ function get_yknk(kind)
     switch (kind) {
     case 0:
         // 焼肉定食
-        snd[1].play();
+        Yknk.Audio.play(1);
         score++;
         sumyknk++;
         break;
     case 1:
         // デリシャス
-        snd[2].play();
+        Yknk.Audio.play(2);
         life = 3;
         score++;
         sumyknk++;
         break;
     case 2:
         // 包丁
-        snd[3].play();
+        Yknk.Audio.play(3);
         life--;
         // ゲームオーバー
         if (life == 0) {
-            stop_loop(5);
+            Yknk.Audio.stopLoop(5);
             draw();
             submode = 1;
             enable_fade = -1;
@@ -571,7 +534,7 @@ function draw()
         // メインメニュー
         if (submode == 0) {
             // 背景
-            ctx.drawImage(img[4], 0, 32, 164, 184, 0, 32, 164, 184);
+            ctx.drawImage(Yknk.Image.image[4], 0, 32, 164, 184, 0, 32, 164, 184);
 
             // 選択項目説明枠
             ctx.fillStyle = "#666666";
@@ -615,7 +578,7 @@ function draw()
             var confboxY = [44+75, 44+95, 44+122];
 
             // 背景
-            ctx.drawImage(img[4],
+            ctx.drawImage(Yknk.Image.image[4],
                 80, confboxY[0], 160, confboxY[len-1]-confboxY[0]+18,
                 80, confboxY[0], 160, confboxY[len-1]-confboxY[0]+18);
 
@@ -643,8 +606,8 @@ function draw()
                     var offsetDown = 0, offsetUp = 1;
                     if (Number(confval[i]) ==  0) offsetDown = 1;
                     if (Number(confval[i]) == 10) offsetUp   = 0;
-                    ctx.drawImage(img[10], 16*offsetDown , 0, 16, 12, 200-32, confboxY[i]+3, 16, 12);
-                    ctx.drawImage(img[10], 16*offsetUp+32, 0, 16, 12, 200+16, confboxY[i]+3, 16, 12);
+                    ctx.drawImage(Yknk.Image.image[10], 16*offsetDown , 0, 16, 12, 200-32, confboxY[i]+3, 16, 12);
+                    ctx.drawImage(Yknk.Image.image[10], 16*offsetUp+32, 0, 16, 12, 200+16, confboxY[i]+3, 16, 12);
                     // 設定値
                     maintext  = String(confval[i]);
                     maintextX = 200;
@@ -665,9 +628,9 @@ function draw()
                     kind = Math.floor(Math.random()*3)+1;
                     posx = Math.floor(Math.random()*320)-8;
                     posy = Math.floor(Math.random()*240)-8;
-                    ctx.drawImage(img[1], 24*kind, 0, 24, 24, posx, posy, 24, 24);
+                    ctx.drawImage(Yknk.Image.image[1], 24*kind, 0, 24, 24, posx, posy, 24, 24);
                 }
-                ctx.drawImage(img[1], 24*(Math.floor(Math.random()*2)+1), 0, 24, 24, 160-12+bugoffsetX, 120-12+bugoffsetY, 24, 24);
+                ctx.drawImage(Yknk.Image.image[1], 24*(Math.floor(Math.random()*2)+1), 0, 24, 24, 160-12+bugoffsetX, 120-12+bugoffsetY, 24, 24);
                 bugoffsetX += Math.floor(Math.random()*18);
                 bugoffsetX -= Math.floor(Math.random()*18);
                 if (bugoffsetX < -160) bugoffsetX = -160+Math.floor(Math.random()*18);
@@ -676,38 +639,38 @@ function draw()
                 bugoffsetY -= Math.floor(Math.random()*18);
                 if (bugoffsetY < -120) bugoffsetY = -120+Math.floor(Math.random()*18);
                 if (bugoffsetY >  120) bugoffsetY =  120-Math.floor(Math.random()*18);
-                ctx.drawImage(img[1], 0, 0, 24, 24, 160-12+bugoffsetX, 120-12+bugoffsetY, 24, 24);
+                ctx.drawImage(Yknk.Image.image[1], 0, 0, 24, 24, 160-12+bugoffsetX, 120-12+bugoffsetY, 24, 24);
                 return;
             }
 
             // 背景
             if (bugged == 0) {
-                ctx.drawImage(img[3], 0, 0, 320, 240-24, 0, 0, 320, 240-24);
+                ctx.drawImage(Yknk.Image.image[3], 0, 0, 320, 240-24, 0, 0, 320, 240-24);
             } else {
-                ctx.drawImage(img[5+Math.floor(Math.random()*2)],
+                ctx.drawImage(Yknk.Image.image[5+Math.floor(Math.random()*2)],
                     0, 0, 320, 240-24, 0, 0, 320, 240-24);
             }
             // 上部のバー
-            ctx.drawImage(img[2], 0, 0, 320, 48, 0, 0, 320, 32);
+            ctx.drawImage(Yknk.Image.image[2], 0, 0, 320, 48, 0, 0, 320, 32);
             // ステータス
             ctx.font = "12px" + defaultFont;
             ctx.fillStyle = "white";
             ctx.textAlign = "start";
-            ctx.drawImage(img[1], 24, 0, 24, 24, 12, 4, 24, 24);
+            ctx.drawImage(Yknk.Image.image[1], 24, 0, 24, 24, 12, 4, 24, 24);
             ctx.fillText("x " + score, 12+24, 20);
-            ctx.drawImage(img[8], 24*(life < 1), 0, 24, 24, 256, 4, 24, 24);
-            ctx.drawImage(img[8], 24*(life < 2), 0, 24, 24, 256+16, 4, 24, 24);
-            ctx.drawImage(img[8], 24*(life < 3), 0, 24, 24, 256+32, 4, 24, 24);
+            ctx.drawImage(Yknk.Image.image[8], 24*(life < 1), 0, 24, 24, 256, 4, 24, 24);
+            ctx.drawImage(Yknk.Image.image[8], 24*(life < 2), 0, 24, 24, 256+16, 4, 24, 24);
+            ctx.drawImage(Yknk.Image.image[8], 24*(life < 3), 0, 24, 24, 256+32, 4, 24, 24);
             if (bugged != 0 && score >= 7777) {
-                ctx.drawImage(img[1], 24*2, 0, 24, 24, 12, 4, 24, 24);
+                ctx.drawImage(Yknk.Image.image[1], 24*2, 0, 24, 24, 12, 4, 24, 24);
             }
 
             // キャラクター
-            ctx.drawImage(img[1], 0, 0, 24, 24, 8/2+24, 32+16/2+24*chr_y, 24, 24);
+            ctx.drawImage(Yknk.Image.image[1], 0, 0, 24, 24, 8/2+24, 32+16/2+24*chr_y, 24, 24);
 
             // 焼肉定食
             for (i = 0; i < yknk_num; i++) {
-                ctx.drawImage(img[1], 24*(yknk_kind[i]+1), 0,
+                ctx.drawImage(Yknk.Image.image[1], 24*(yknk_kind[i]+1), 0,
                     24, 24, 8/2+yknk_x[i], 32+16/2+24*yknk_y[i], 24, 24);
             }
         } else {
@@ -730,15 +693,15 @@ function draw()
     if (isDrawInit) {
         // タイトル画面
         if (mode == 0) {
-            ctx.drawImage(img[0], 0, 0, 320, 240-24, 0, 0, 320, 240-24);
+            ctx.drawImage(Yknk.Image.image[0], 0, 0, 320, 240-24, 0, 0, 320, 240-24);
         }
         // メニュー
         if (mode == 1) {
             var pagename = ["メニュー", "記録", "設定"];
             // 背景
-            ctx.drawImage(img[4], 0, 32, 320, 240-32-24, 0, 32, 320, 240-32-24);
+            ctx.drawImage(Yknk.Image.image[4], 0, 32, 320, 240-32-24, 0, 32, 320, 240-32-24);
             // 上部のバー
-            ctx.drawImage(img[2], 0, 0, 320, 48, 0, 0, 320, 32);
+            ctx.drawImage(Yknk.Image.image[2], 0, 0, 320, 48, 0, 0, 320, 32);
             // バーの文字
             ctx.font = "16px" + defaultFont;
             ctx.textAlign = "center";
@@ -760,7 +723,7 @@ function draw()
                 // ステータス
                 ctx.fillStyle = "#CCCCCC";
                 ctx.fillText("ハイスコア", 172, 58);
-                ctx.drawImage(img[1], 24, 0, 24, 24, 172+64, 48+6-12, 24, 24);
+                ctx.drawImage(Yknk.Image.image[1], 24, 0, 24, 24, 172+64, 48+6-12, 24, 24);
                 ctx.fillStyle = "white";
                 ctx.fillText("x " + mscore, 196+64, 58);
             }
@@ -791,8 +754,8 @@ function draw()
             if (submode == 2) {
                 //ctx.textAlign = "center";
                 ctx.fillStyle = "black";
-                ctx.drawImage(img[1], 24, 0, 24, 24,   8, 39, 48, 48);
-                ctx.drawImage(img[1], 48, 0, 24, 24, 264, 39, 48, 48);
+                ctx.drawImage(Yknk.Image.image[1], 24, 0, 24, 24,   8, 39, 48, 48);
+                ctx.drawImage(Yknk.Image.image[1], 48, 0, 24, 24, 264, 39, 48, 48);
 
                 ctx.font = "18px" + defaultFont;
                 ctx.fillText("焼肉定食ゲーム Ver 1.5", 160, 48+20);
@@ -840,7 +803,7 @@ function modeChg(m)
     if (m == 2) {
         mode_n = 2;
         enable_fade = 240;
-        stop_loop(4);
+        Yknk.Audio.stopLoop(4);
 
         for (var i = 0; i < 32; i++) {
             new_yknk(i);
@@ -852,43 +815,28 @@ function modeChg(m)
 function endfade(m)
 {
     if (m == 1) {
-        play_loop(4);
+        Yknk.Audio.playLoop(4);
         submode = 0;
     }
     if (m == 2) {
-        play_loop(5);
+        Yknk.Audio.playLoop(5);
         submode = 0;
     }
 }
 
 ///// サウンド関連ユーティリティ
-function play_loop(id)
-{
-    var f = function (n) {
-        var s = snd[n];
-        return function () { s.play(); };
-    };
-    snd[id].play();
-    snd[id].addEventListener('ended', f(id), false);
-}
-function stop_loop(id)
-{
-    snd[id].addEventListener('ended', function(){}, false);
-    snd[id].currentTime = 0;
-    snd[id].pause();
-}
 function set_volume(bgm, se)
 {
     var vb = bgm / 10.0;
     var vs = se  / 10.0;
-    snd[0].volume = vs;
-    snd[1].volume = vs;
-    snd[2].volume = vs;
-    snd[3].volume = vs;
-    snd[4].volume = vb;
-    snd[5].volume = vb;
-    snd[6].volume = vb;
-    snd[7].volume = vb;
+    Yknk.Audio.setVolume(0, vs);
+    Yknk.Audio.setVolume(1, vs);
+    Yknk.Audio.setVolume(2, vs);
+    Yknk.Audio.setVolume(3, vs);
+    Yknk.Audio.setVolume(4, vb);
+    Yknk.Audio.setVolume(5, vb);
+    Yknk.Audio.setVolume(6, vb);
+    Yknk.Audio.setVolume(7, vb);
 
     vol_bgm = bgm;
     vol_se  = se;
@@ -898,11 +846,11 @@ function set_volume(bgm, se)
 function drawBottomBar()
 {
     // バー背景
-    ctx.drawImage(img[2], 0, 0, 320, 48, 0, 240-24, 320, 24);
+    ctx.drawImage(Yknk.Image.image[2], 0, 0, 320, 48, 0, 240-24, 320, 24);
 
     // ミュート表示
-    var mute = (snd[0].muted) ? 1 : 0;
-    ctx.drawImage(img[7], 24*mute, 0, 24, 24, 320-24, 240-24, 24, 24);
+    var mute = (Yknk.Audio.isMuted()) ? 1 : 0;
+    ctx.drawImage(Yknk.Image.image[7], 24*mute, 0, 24, 24, 320-24, 240-24, 24, 24);
 
     // 文字
     ctx.font = "12px" + defaultFont;
