@@ -831,7 +831,7 @@ function draw()
 function modeChg(m)
 {
     if (m == 0) {
-        Yknk.Share.init();
+        Yknk.Share.reset();
     }
     if (m == 1) {
         mode_n = 1;

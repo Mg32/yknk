@@ -45,8 +45,8 @@ Yknk.Share = Yknk.Share || {
 
     ///////////////////////////////////////////////////////////////////////////
 
-    // 初期化をおこなう
-    init: function() {
+    // リセットする
+    reset: function() {
         this.setText("エラー");
         this.setVisible(false);
     },

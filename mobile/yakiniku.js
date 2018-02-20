@@ -114,7 +114,7 @@ function touchEnd(e)
 function modeChg(m)
 {
     if (m == 0) {
-        Yknk.Share.init();
+        Yknk.Share.reset();
         mode   = 0;
         mode_n = 0;
         isdead = false;
